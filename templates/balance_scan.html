@@ -30,7 +30,7 @@
                        id="max_pages"
                        value="{{ max_pages if max_pages else 10 }}"
                        min="1" 
-                       max="500"
+                       max="50"
                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                        required>
             </div>
@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="mt-2 text-sm text-gray-500">
-            <p>⚡ Optimized: Batch processing for faster scans. Max 500 pages per scan.</p>
+            <p>⚡ Vercel Optimized: Batch processing for faster scans. Max 50 pages per scan.</p>
         </div>
     </form>
 
@@ -161,7 +161,7 @@
             <li>Only addresses with non-zero balances will be shown in results</li>
             <li>Click on page numbers to jump to that page in the main view</li>
             <li>Use copy buttons (📋) to copy private keys or addresses</li>
-            <li>Scanning is limited to 500 pages per request for performance</li>
+            <li>Scanning is limited to 50 pages per request for Vercel performance</li>
         </ul>
     </div>
 

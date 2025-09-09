@@ -90,8 +90,8 @@ def balance_scan():
         max_pages = int(max_pages)
         if start_page < 1:
             return render_template('balance_scan.html', error="Starting page must be 1 or greater")
-        if max_pages < 1 or max_pages > 500:
-            return render_template('balance_scan.html', error="Max pages must be between 1 and 500")
+        if max_pages < 1 or max_pages > 50:
+            return render_template('balance_scan.html', error="Max pages must be between 1 and 50 (Vercel optimized)")
     except ValueError:
         return render_template('balance_scan.html', error="Invalid page numbers")
     
@@ -267,6 +267,9 @@ app.jinja_env.globals.update(
     MAX_SEARCH_PAGES=MAX_SEARCH_PAGES,
     ADDRESSES_PER_PAGE=ADDRESSES_PER_PAGE
 )
+
+# For Vercel deployment
+app = app
 
 if __name__ == '__main__':
     app.run(debug=FLASK_DEBUG, host=FLASK_HOST, port=FLASK_PORT)
