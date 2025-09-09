@@ -82,6 +82,7 @@ def about():
 def search():
     """Search for a specific Bitcoin address and find which page it's on"""
     address = request.args.get('address', '').strip()
+    start_page = request.args.get('start_page', '1').strip()
     
     if not address:
         return render_template('search.html', error="Please enter an address to search")
@@ -90,12 +91,27 @@ def search():
     if not (address.startswith('1') or address.startswith('3') or address.startswith('bc1')):
         return render_template('search.html', error="Invalid Bitcoin address format")
     
+    # Validate and parse starting page
+    try:
+        start_page = int(start_page)
+        if start_page < 1 or start_page > 2500:
+            return render_template('search.html', 
+                                 address=address, 
+                                 start_page=start_page,
+                                 error="Starting page must be between 1 and 2500")
+    except ValueError:
+        return render_template('search.html', 
+                             address=address, 
+                             start_page=start_page,
+                             error="Invalid starting page number")
+    
     # Search for the address
-    result = find_address_page(address)
+    result = find_address_page(address, start_page)
     
     if result:
         return render_template('search.html', 
                              address=address, 
+                             start_page=start_page,
                              page=result['page'], 
                              position=result['position'],
                              private_key=result['private_key'],
@@ -103,15 +119,18 @@ def search():
     else:
         return render_template('search.html', 
                              address=address, 
-                             error="Address not found in the generated sequence")
+                             start_page=start_page,
+                             error=f"Address not found in pages {start_page} to {start_page + MAX_SEARCH_PAGES - 1}")
 
-def find_address_page(target_address):
+def find_address_page(target_address, start_page=1):
     """Find which page contains a specific Bitcoin address"""
     # We need to search through the generated addresses
     # This is computationally expensive, so we'll use a smart search approach
     
-    # First, let's try a few pages to see if we can find it quickly
-    for page in range(1, MAX_SEARCH_PAGES + 1):
+    # Search through MAX_SEARCH_PAGES starting from the specified start_page
+    end_page = min(start_page + MAX_SEARCH_PAGES - 1, 2500)  # Don't exceed page 2500
+    
+    for page in range(start_page, end_page + 1):
         items = all_key_service.get_data(page, ADDRESSES_PER_PAGE)
         
         for i, item in enumerate(items):
@@ -130,8 +149,7 @@ def find_address_page(target_address):
                     'is_compressed': False
                 }
     
-    # If not found in first 100 pages, return None
-    # Note: For addresses beyond page 100, you would need a more sophisticated search algorithm
+    # If not found in the search range, return None
     return None
 
 def get_balance(address, balance_list, balance_type):
@@ -177,7 +195,9 @@ app.jinja_env.globals.update(
     get_balance_class=get_balance_class,
     format_balance=format_balance,
     truncate_text=truncate_text,
-    calculate_page_total_balance=calculate_page_total_balance
+    calculate_page_total_balance=calculate_page_total_balance,
+    MAX_SEARCH_PAGES=MAX_SEARCH_PAGES,
+    ADDRESSES_PER_PAGE=ADDRESSES_PER_PAGE
 )
 
 if __name__ == '__main__':
