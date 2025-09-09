@@ -19,5 +19,5 @@ BITCOIN_MAX_NUMBER = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd
 
 # Flask configuration
 FLASK_HOST = '0.0.0.0'
-FLASK_PORT = 5000
-FLASK_DEBUG = False  # Set to False for production (Vercel)
+FLASK_PORT = 5001
+FLASK_DEBUG = True  # Set to True for development (auto-reload templates)

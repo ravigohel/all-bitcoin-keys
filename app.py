@@ -58,7 +58,8 @@ def home_page():
             item.address_uncompressed_balance = None
             item.address_uncompressed_received = None
     
-    # Calculate pagination
+    # Calculate pagination - use the actual Bitcoin max number for scientific notation
+    # This will show the true scale in scientific notation
     max_page = BITCOIN_MAX_NUMBER // limit_per_page
     
     # Calculate total balance for this page
@@ -206,6 +207,54 @@ def truncate_text(text, start_chars=4, end_chars=3):
         return text
     return f"{text[:start_chars]}...{text[-end_chars:]}"
 
+def format_page_number(page_num):
+    """Format large page numbers to be more readable"""
+    try:
+        # Convert to int if it's a string
+        if isinstance(page_num, str):
+            page_num = int(page_num)
+        
+        if page_num < 1000:
+            return str(page_num)
+        elif page_num < 1000000:
+            return f"{page_num // 1000}K"
+        elif page_num < 1000000000:
+            return f"{page_num // 1000000}M"
+        else:
+            return f"{page_num // 1000000000}B"
+    except (ValueError, TypeError):
+        # If conversion fails, return a simplified version
+        return "∞"
+
+def format_scientific_notation(number):
+    """Format large numbers in scientific notation"""
+    try:
+        if isinstance(number, str):
+            number = int(number)
+        
+        if number < 1000:
+            return str(number)
+        else:
+            # Convert to scientific notation
+            import math
+            exponent = int(math.log10(number))
+            coefficient = number / (10 ** exponent)
+            
+            # Round coefficient to 2 decimal places
+            coefficient = round(coefficient, 2)
+            
+            # Use proper superscript characters
+            superscript_map = {
+                '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+            }
+            
+            exponent_str = ''.join(superscript_map.get(digit, digit) for digit in str(exponent))
+            return f"{coefficient}×10{exponent_str}"
+    except (ValueError, TypeError, OverflowError):
+        # For extremely large numbers, use a fallback
+        return "2.8×10²³"
+
 def calculate_page_total_balance(items):
     """Calculate total balance for all addresses on the current page"""
     total_balance = 0
@@ -263,6 +312,8 @@ app.jinja_env.globals.update(
     get_balance_class=get_balance_class,
     format_balance=format_balance,
     truncate_text=truncate_text,
+    format_page_number=format_page_number,
+    format_scientific_notation=format_scientific_notation,
     calculate_page_total_balance=calculate_page_total_balance,
     MAX_SEARCH_PAGES=MAX_SEARCH_PAGES,
     ADDRESSES_PER_PAGE=ADDRESSES_PER_PAGE

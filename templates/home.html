@@ -4,6 +4,24 @@
 
 {% block content %}
 <div class="bg-white rounded-lg shadow-lg m-4 p-6">
+    <!-- Top Navigation -->
+    <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+        <a href="{{ url_for('home_page', page=page-1) if page > 1 else '#' }}"
+           class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors {% if page <= 1 %}opacity-50 cursor-not-allowed{% endif %}">
+            <span>←</span>
+            <span>Previous</span>
+        </a>
+        <div class="text-center">
+            <div class="text-lg font-semibold text-gray-800">Page {{ page }}</div>
+            <div class="text-sm text-gray-500">{{ format_scientific_notation(max_page) }} total pages</div>
+        </div>
+        <a href="{{ url_for('home_page', page=page+1) if page < max_page else '#' }}"
+           class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors {% if page >= max_page %}opacity-50 cursor-not-allowed{% endif %}">
+            <span>Next</span>
+            <span>→</span>
+        </a>
+    </div>
+
     <table class="table-auto w-full font-mono font-light">
         <thead class="text-gray-500 border-b border-b-slate-200">
             <tr>
@@ -70,15 +88,20 @@
         </tbody>
     </table>
 
-    <div class="flex justify-between p-6">
+    <!-- Bottom Navigation -->
+    <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
         <a href="{{ url_for('home_page', page=page-1) if page > 1 else '#' }}"
-           class="border border-b-slate-200 hover:bg-slate-100 px-4 py-2 whitespace-nowrap focus:ring-2 focus:ring-slate-200 rounded {% if page <= 1 %}opacity-50 cursor-not-allowed{% endif %}">
-            ← Older
+           class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors {% if page <= 1 %}opacity-50 cursor-not-allowed{% endif %}">
+            <span>←</span>
+            <span>Previous</span>
         </a>
-        <div>{{ page }} of {{ max_page }}</div>
+        <div class="text-center">
+            <div class="text-sm text-gray-600">{{ page }} of {{ format_scientific_notation(max_page) }}</div>
+        </div>
         <a href="{{ url_for('home_page', page=page+1) if page < max_page else '#' }}"
-           class="border border-b-slate-200 hover:bg-slate-100 px-4 py-2 whitespace-nowrap focus:ring-2 focus:ring-slate-200 rounded {% if page >= max_page %}opacity-50 cursor-not-allowed{% endif %}">
-            Newer →
+           class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors {% if page >= max_page %}opacity-50 cursor-not-allowed{% endif %}">
+            <span>Next</span>
+            <span>→</span>
         </a>
     </div>
 </div>
