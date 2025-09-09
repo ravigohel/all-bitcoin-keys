@@ -78,6 +78,32 @@ def home_page():
 def about():
     return render_template('about.html')
 
+@app.route('/balance-scan')
+def balance_scan():
+    """Scan pages for addresses with balances"""
+    start_page = request.args.get('start_page', '1').strip()
+    max_pages = request.args.get('max_pages', '10').strip()
+    
+    # Validate inputs
+    try:
+        start_page = int(start_page)
+        max_pages = int(max_pages)
+        if start_page < 1:
+            return render_template('balance_scan.html', error="Starting page must be 1 or greater")
+        if max_pages < 1 or max_pages > 500:
+            return render_template('balance_scan.html', error="Max pages must be between 1 and 500")
+    except ValueError:
+        return render_template('balance_scan.html', error="Invalid page numbers")
+    
+    # Perform balance scan
+    results = scan_pages_for_balances(start_page, max_pages)
+    
+    return render_template('balance_scan.html', 
+                         start_page=start_page,
+                         max_pages=max_pages,
+                         results=results,
+                         total_found=len(results))
+
 @app.route('/search')
 def search():
     """Search for a specific Bitcoin address and find which page it's on"""
@@ -189,6 +215,48 @@ def calculate_page_total_balance(items):
         if item.address_uncompressed_balance:
             total_balance += item.address_uncompressed_balance
     return total_balance
+
+def scan_pages_for_balances(start_page, max_pages):
+    """Scan multiple pages for addresses with balances - Optimized for speed"""
+    results = []
+    end_page = start_page + max_pages - 1
+    
+    # Collect all addresses from all pages first
+    all_items = []
+    for page in range(start_page, end_page + 1):
+        items = all_key_service.get_data(page, ADDRESSES_PER_PAGE)
+        for item in items:
+            item.page_number = page  # Store page number with item
+            all_items.append(item)
+    
+    # Prepare all addresses for batch balance checking
+    all_addresses = []
+    for item in all_items:
+        all_addresses.append(item.address_compressed)
+        all_addresses.append(item.address_uncompressed)
+    
+    # Single batch API call for all addresses (much faster!)
+    balance_list = balance_service.get_balance(all_addresses)
+    
+    # Process results
+    for item in all_items:
+        compressed_balance = get_balance(item.address_compressed, balance_list, 'final_balance')
+        uncompressed_balance = get_balance(item.address_uncompressed, balance_list, 'final_balance')
+        
+        # If either address has a balance, add to results
+        if compressed_balance > 0 or uncompressed_balance > 0:
+            results.append({
+                'page': item.page_number,
+                'private_key': item.private_key,
+                'address_compressed': item.address_compressed,
+                'address_uncompressed': item.address_uncompressed,
+                'compressed_balance': compressed_balance,
+                'uncompressed_balance': uncompressed_balance,
+                'compressed_received': get_balance(item.address_compressed, balance_list, 'total_received'),
+                'uncompressed_received': get_balance(item.address_uncompressed, balance_list, 'total_received')
+            })
+    
+    return results
 
 # Make functions available in templates
 app.jinja_env.globals.update(
