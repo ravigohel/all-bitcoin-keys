@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Home - All Key{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-lg m-0 p-0">
+    <table class="table-auto w-full font-mono font-light">
+        <thead class="text-gray-500 border-b border-b-slate-200">
+            <tr>
+                {% for column in table_header_columns %}
+                <td class="px-4 py-2 whitespace-nowrap">{{ column }}</td>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr class="hover:bg-slate-100 border-b border-b-slate-100">
+                <td class="px-4 py-2 whitespace-nowrap">
+                    <div class="flex items-center gap-2">
+                        <span class="font-mono">{{ truncate_text(item.private_key, 7, 9) }}</span>
+                        <button onclick="copyToClipboard('{{ item.private_key }}')" 
+                                class="text-gray-400 hover:text-gray-600 transition-colors" 
+                                title="Copy private key">
+                            📋
+                        </button>
+                    </div>
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap">
+                    <div class="flex items-center gap-2">
+                        <a href="https://www.blockchain.com/btc/address/{{ item.address_uncompressed }}"
+                           target="_blank"
+                           class="text-blue-500 hover:text-blue-900 hover:underline font-mono">
+                            {{ truncate_text(item.address_uncompressed, 9, 7) }}
+                        </a>
+                        <button onclick="copyToClipboard('{{ item.address_uncompressed }}')" 
+                                class="text-gray-400 hover:text-gray-600 transition-colors" 
+                                title="Copy address">
+                            📋
+                        </button>
+                    </div>
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap {{ get_balance_class(item.address_uncompressed_balance) }}">
+                    {{ format_balance(item.address_uncompressed_balance) }}
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap {{ get_balance_class(item.address_uncompressed_received) }}">
+                    {{ format_balance(item.address_uncompressed_received) }}
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap">
+                    <div class="flex items-center gap-2">
+                        <a href="https://www.blockchain.com/btc/address/{{ item.address_compressed }}"
+                           target="_blank"
+                           class="text-blue-500 hover:text-blue-900 hover:underline font-mono">
+                            {{ truncate_text(item.address_compressed, 9, 7) }}
+                        </a>
+                        <button onclick="copyToClipboard('{{ item.address_compressed }}')" 
+                                class="text-gray-400 hover:text-gray-600 transition-colors" 
+                                title="Copy address">
+                            📋
+                        </button>
+                    </div>
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap {{ get_balance_class(item.address_compressed_balance) }}">
+                    {{ format_balance(item.address_compressed_balance) }}
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap {{ get_balance_class(item.address_compressed_received) }}">
+                    {{ format_balance(item.address_compressed_received) }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="flex justify-between p-0">
+        <a href="{{ url_for('home_page', page=page-1) if page > 1 else '#' }}"
+           class="border border-b-slate-200 hover:bg-slate-100 px-4 py-2 whitespace-nowrap focus:ring-2 focus:ring-slate-200 rounded {% if page <= 1 %}opacity-50 cursor-not-allowed{% endif %}">
+            ← Older
+        </a>
+        <div>{{ page }} of {{ max_page }}</div>
+        <a href="{{ url_for('home_page', page=page+1) if page < max_page else '#' }}"
+           class="border border-b-slate-200 hover:bg-slate-100 px-4 py-2 whitespace-nowrap focus:ring-2 focus:ring-slate-200 rounded {% if page >= max_page %}opacity-50 cursor-not-allowed{% endif %}">
+            Newer →
+        </a>
+    </div>
+</div>
+{% endblock %}
