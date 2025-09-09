@@ -94,11 +94,11 @@ def search():
     # Validate and parse starting page
     try:
         start_page = int(start_page)
-        if start_page < 1 or start_page > 2500:
+        if start_page < 1:
             return render_template('search.html', 
                                  address=address, 
                                  start_page=start_page,
-                                 error="Starting page must be between 1 and 2500")
+                                 error="Starting page must be 1 or greater")
     except ValueError:
         return render_template('search.html', 
                              address=address, 
@@ -128,7 +128,7 @@ def find_address_page(target_address, start_page=1):
     # This is computationally expensive, so we'll use a smart search approach
     
     # Search through MAX_SEARCH_PAGES starting from the specified start_page
-    end_page = min(start_page + MAX_SEARCH_PAGES - 1, 2500)  # Don't exceed page 2500
+    end_page = start_page + MAX_SEARCH_PAGES - 1
     
     for page in range(start_page, end_page + 1):
         items = all_key_service.get_data(page, ADDRESSES_PER_PAGE)

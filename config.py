@@ -7,7 +7,7 @@ ADDRESSES_PER_PAGE = 500
 
 # Performance options
 ENABLE_BALANCE_CHECKING = True  # Set to False for maximum speed (no API calls)
-MAX_SEARCH_PAGES = 1000  # Maximum pages to search through for address lookup
+MAX_SEARCH_PAGES = 2500  # Maximum pages to search through for address lookup
 
 # API configuration
 API_REQUEST_DELAY = 0.1  # seconds between API requests (reduced for speed)
