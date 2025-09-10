@@ -91,8 +91,12 @@ class BalanceService:
             
         except requests.exceptions.RequestException as e:
             print(f"Error fetching balance data: {e}")
+            print(f"URL attempted: {url}")
+            print(f"Addresses: {addresses[:3]}...")  # Show first 3 addresses
             # Return empty balances for this chunk
             return {address: Blockchain(0, 0, 0) for address in addresses}
         except Exception as e:
             print(f"Unexpected error: {e}")
+            print(f"URL attempted: {url}")
+            print(f"Addresses: {addresses[:3]}...")  # Show first 3 addresses
             return {address: Blockchain(0, 0, 0) for address in addresses}
