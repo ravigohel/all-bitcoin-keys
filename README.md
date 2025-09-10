@@ -10,10 +10,12 @@ A high-performance Python Flask application that generates Bitcoin private keys 
 - **Real-time Balance Checking**: Live balance data from blockchain.info API
 - **Smart Search**: Find any Bitcoin address and its page location
 - **Balance Scanner**: High-speed multi-page scanning for addresses with balances
+- **Scientific Notation Pagination**: Display page numbers in scientific format (2.32×10⁷⁴)
 - **Pagination**: Browse through 500 addresses per page with navigation
 
 ### User Experience
 - **Truncated Display**: Clean view showing first 7 and last 9 characters
+- **Scientific Notation**: Professional display of page numbers (2.32×10⁷⁴ format)
 - **Copy Functionality**: One-click copy buttons for full private keys and addresses
 - **Page Total Balance**: Real-time total balance display in navigation bar
 - **Green Balance Highlighting**: Non-zero balances highlighted in dark green
@@ -97,7 +99,8 @@ The application uses a centralized configuration system (`config.py`):
 ### Core Settings
 - **Addresses per Page**: 500 addresses displayed per page (configurable)
 - **Search Limit**: 1000 pages (500,000 addresses) for address lookup
-- **Balance Scan Limit**: 500 pages (250,000 addresses) per scan
+- **Balance Scan Limit**: 50 pages (25,000 addresses) per scan (Vercel optimized)
+- **Total Pages**: 2.32×10⁷⁴ (scientific notation display)
 - **Balance Checking**: Enable/disable real-time balance checking
 
 ### API Optimization
@@ -160,17 +163,16 @@ The Balance Scanner is a powerful new feature that allows you to scan multiple p
 
 ### Balance Scanner Features:
 - **High-Speed Scanning**: Batch processing for 10x faster performance
-- **Large Scale**: Scan up to 500 pages (250,000 addresses) per request
+- **Large Scale**: Scan up to 50 pages (25,000 addresses) per request (Vercel optimized)
 - **Real-time Results**: Live balance data from blockchain APIs
 - **Filtered Results**: Only shows addresses with actual Bitcoin balances
 - **Easy Navigation**: Direct links to view addresses in the main table
 - **Copy Functionality**: One-click copying of private keys and addresses
 
 ### Performance Examples:
-- **10 pages**: ~10,000 addresses scanned in seconds
-- **50 pages**: ~50,000 addresses scanned in under a minute
-- **100 pages**: ~100,000 addresses scanned in 1-2 minutes
-- **500 pages**: ~250,000 addresses scanned in 5-10 minutes
+- **10 pages**: ~5,000 addresses scanned in seconds
+- **25 pages**: ~12,500 addresses scanned in under a minute
+- **50 pages**: ~25,000 addresses scanned in 1-2 minutes (Vercel optimized)
 
 ### Technical Details:
 - **Batch Processing**: Single API call for all addresses (much faster than page-by-page)
@@ -197,6 +199,7 @@ The Balance Scanner is a powerful new feature that allows you to scan multiple p
 
 ### Display Features
 - **Balance Display**: 5 decimal places with green highlighting for non-zero balances
+- **Scientific Notation Pagination**: Professional display of page numbers (2.32×10⁷⁴ format)
 - **Truncated Display**: Private keys and addresses show first 7 and last 9 characters
 - **Copy Functionality**: One-click copy buttons for full private keys and addresses
 - **Page Total Balance**: Real-time total balance display in navigation bar
@@ -209,6 +212,30 @@ The Balance Scanner is a powerful new feature that allows you to scan multiple p
 - **Intelligent Caching**: In-memory cache for instant repeated requests
 - **Configurable Settings**: Balance checking can be disabled for maximum speed
 - **Optimized Chunking**: 200 addresses per API request for efficiency
+
+## 🔬 Scientific Notation Feature
+
+The application now displays page numbers in scientific notation to accurately represent the enormous scale of Bitcoin's private key space:
+
+### Key Features:
+- **Dynamic Calculation**: Based on actual Bitcoin max number (2²⁵⁶)
+- **Professional Format**: Uses proper Unicode superscript characters (2.32×10⁷⁴)
+- **Accurate Representation**: Shows the true scale of Bitcoin's private key space
+- **Clean Display**: Much more readable than displaying the full number
+
+### Technical Details:
+- **Total Pages**: 2.32×10⁷⁴ (232 followed by 72 zeros!)
+- **Format**: Coefficient × 10^exponent with Unicode superscripts
+- **Implementation**: Dynamic calculation using `format_scientific_notation()` function
+- **Display**: Both top and bottom navigation show scientific notation
+
+### Example:
+```
+Instead of: 231584178474632390847141970017375815705675128558149808765210326283B
+Shows:      2.32×10⁷⁴
+```
+
+This makes the pagination much more professional and mathematically accurate while being easily readable.
 
 ## ⚠️ Security Notice
 
@@ -226,6 +253,7 @@ This project is based on the original Angular TypeScript implementation by [ming
 | Balance Checking | Real-time | Real-time + Caching |
 | Search Functionality | Limited | Enhanced (1000 pages) |
 | Balance Scanner | Not Available | **NEW**: Multi-page scanning |
+| Scientific Notation | Not Available | **NEW**: Professional pagination display |
 | Copy Functionality | Basic | Advanced (truncated + copy) |
 | Configuration | Fixed | Configurable |
 | Performance | Good | Optimized (concurrent + batch processing) |

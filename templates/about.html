@@ -16,7 +16,8 @@
                     <li><strong>Dual Address Format:</strong> Both compressed and uncompressed P2PKH addresses</li>
                     <li><strong>Real-time Balance Checking:</strong> Live balance data from blockchain.info</li>
                     <li><strong>Smart Search:</strong> Find any address and its page location</li>
-                    <li><strong>Balance Scanner:</strong> NEW! Scan multiple pages for addresses with balances</li>
+                    <li><strong>Balance Scanner:</strong> Scan multiple pages for addresses with balances</li>
+                    <li><strong>Scientific Notation Pagination:</strong> Display page numbers in scientific format (2.32×10⁷⁴)</li>
                     <li><strong>Truncated Display:</strong> Clean view with copy functionality</li>
                     <li><strong>Page Total Balance:</strong> See total balance for each page</li>
                     <li><strong>Performance Optimized:</strong> Batch processing with concurrent API requests</li>
@@ -32,7 +33,8 @@
                     <li><strong>Intelligent caching</strong> for instant repeated requests</li>
                     <li><strong>Configurable settings</strong> for speed vs. functionality</li>
                     <li><strong>Search limit:</strong> 1000 pages (500,000 addresses)</li>
-                    <li><strong>Balance scan limit:</strong> 500 pages (250,000 addresses)</li>
+                    <li><strong>Balance scan limit:</strong> 50 pages (25,000 addresses) - Vercel optimized</li>
+                    <li><strong>Total pages:</strong> 2.32×10⁷⁴ (scientific notation display)</li>
                 </ul>
             </div>
         </div>
@@ -53,12 +55,26 @@
                     <h3 class="font-semibold mb-2">Display Features:</h3>
                     <ul class="list-disc list-inside space-y-1">
                         <li>Truncated keys: <code class="bg-gray-200 px-1 rounded">5HpHa...uDf</code></li>
+                        <li>Scientific notation pagination: <code class="bg-gray-200 px-1 rounded">2.32×10⁷⁴</code></li>
                         <li>Green highlighting for non-zero balances</li>
                         <li>Copy buttons for full keys/addresses</li>
                         <li>5 decimal places for balance precision</li>
                     </ul>
                 </div>
             </div>
+        </div>
+        
+        <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h2 class="text-xl font-semibold mb-2 text-blue-800">🔬 Scientific Notation Feature</h2>
+            <p class="text-sm text-blue-700 mb-2">
+                The pagination now displays page numbers in scientific notation to accurately represent the enormous scale of Bitcoin's private key space:
+            </p>
+            <ul class="list-disc list-inside text-sm text-blue-700 space-y-1">
+                <li><strong>Total pages:</strong> 2.32×10⁷⁴ (232 followed by 72 zeros!)</li>
+                <li><strong>Format:</strong> Uses proper Unicode superscript characters</li>
+                <li><strong>Dynamic calculation:</strong> Based on actual Bitcoin max number</li>
+                <li><strong>Professional display:</strong> Clean, mathematically accurate representation</li>
+            </ul>
         </div>
         
         <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
