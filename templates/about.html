@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Info - All Key{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-lg m-4 p-6">
+    <div class="p-4">
+        <h1 class="text-2xl font-bold mb-4">About All Key - Python Version</h1>
+        <p class="mb-4">A Python Flask application that generates Bitcoin private keys sequentially and displays their corresponding addresses with real-time balance information.</p>
+        
+        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h2 class="text-lg font-semibold mb-2 text-blue-800">🎯 How to Use This Application</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <h3 class="font-semibold mb-1">📖 Browse Keys</h3>
+                    <p class="text-blue-700">Navigate through Bitcoin private keys and addresses page by page. Use the enhanced navigation buttons (First, Previous, Random, Next, Last) to explore the massive key space.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-1">🔍 Find Address</h3>
+                    <p class="text-blue-700">Search for a specific Bitcoin address to find which page it's located on. Get the exact page number, position, and private key.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-1">💰 Find Balances</h3>
+                    <p class="text-blue-700">Scan multiple pages to discover addresses that actually contain Bitcoin. High-speed scanning with batch processing for efficiency.</p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-1">ℹ️ Info</h3>
+                    <p class="text-blue-700">Learn about the application's features, technical details, and how to use it effectively.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <h2 class="text-xl font-semibold mb-3 text-blue-800">🚀 Key Features</h2>
+                <ul class="list-disc list-inside space-y-2 text-sm">
+                    <li><strong>Sequential Key Generation:</strong> Generates Bitcoin private keys starting from 1</li>
+                    <li><strong>Dual Address Format:</strong> Both compressed and uncompressed P2PKH addresses</li>
+                    <li><strong>Real-time Balance Checking:</strong> Live balance data from blockchain.info</li>
+                    <li><strong>Enhanced Navigation:</strong> First, Previous, Random, Next, Last buttons</li>
+                    <li><strong>Page Percentage Display:</strong> Shows current position with 2 decimal precision</li>
+                    <li><strong>Smart Address Search:</strong> Find any address and its page location</li>
+                    <li><strong>Balance Discovery:</strong> Scan multiple pages for addresses with balances</li>
+                    <li><strong>Scientific Notation Pagination:</strong> Display page numbers in scientific format (2.32×10⁷⁴)</li>
+                    <li><strong>Page Totals:</strong> See total balance and received amounts for each page</li>
+                    <li><strong>Performance Optimized:</strong> Batch processing with concurrent API requests</li>
+                </ul>
+            </div>
+            
+            <div>
+                <h2 class="text-xl font-semibold mb-3 text-green-800">⚡ Performance Features</h2>
+                <ul class="list-disc list-inside space-y-2 text-sm">
+                    <li><strong>500 addresses per page</strong> for efficient browsing</li>
+                    <li><strong>10 concurrent API threads</strong> for fast balance checking</li>
+                    <li><strong>Batch processing</strong> for 10x faster balance scanning</li>
+                    <li><strong>Intelligent caching</strong> for instant repeated requests</li>
+                    <li><strong>Configurable settings</strong> for speed vs. functionality</li>
+                    <li><strong>Search limit:</strong> 1000 pages (500,000 addresses)</li>
+                    <li><strong>Balance scan limit:</strong> 50 pages (25,000 addresses) - Vercel optimized</li>
+                    <li><strong>Total pages:</strong> 2.32×10⁷⁴ (scientific notation display)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+            <h2 class="text-xl font-semibold mb-3 text-purple-800">🔧 Technical Details</h2>
+            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div>
+                    <h3 class="font-semibold mb-2">Generation Method:</h3>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Sequential private keys (1, 2, 3, ...)</li>
+                        <li>ECDSA SECP256k1 curve</li>
+                        <li>P2PKH format with Base58 encoding</li>
+                        <li>Uncompressed WIF private keys</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Display Features:</h3>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Truncated keys: <code class="bg-gray-200 px-1 rounded">5HpHa...uDf</code></li>
+                        <li>Scientific notation pagination: <code class="bg-gray-200 px-1 rounded">2.32×10⁷⁴</code></li>
+                        <li>Green highlighting for non-zero balances</li>
+                        <li>Copy buttons for full keys/addresses</li>
+                        <li>5 decimal places for balance precision</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <h2 class="text-xl font-semibold mb-2 text-blue-800">🔬 Scientific Notation Feature</h2>
+            <p class="text-sm text-blue-700 mb-2">
+                The pagination now displays page numbers in scientific notation to accurately represent the enormous scale of Bitcoin's private key space:
+            </p>
+            <ul class="list-disc list-inside text-sm text-blue-700 space-y-1">
+                <li><strong>Total pages:</strong> 2.32×10⁷⁴ (232 followed by 72 zeros!)</li>
+                <li><strong>Format:</strong> Uses proper Unicode superscript characters</li>
+                <li><strong>Dynamic calculation:</strong> Based on actual Bitcoin max number</li>
+                <li><strong>Professional display:</strong> Clean, mathematically accurate representation</li>
+            </ul>
+        </div>
+        
+        <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h2 class="text-xl font-semibold mb-2 text-yellow-800">⚠️ Security Notice</h2>
+            <p class="text-sm text-yellow-700">
+                This application is for <strong>educational purposes only</strong>. The generated private keys are sequential and predictable, making them unsuitable for actual Bitcoin transactions. Never use these keys for real cryptocurrency operations.
+            </p>
+        </div>
+        
+        <div class="mt-6">
+            <h2 class="text-xl font-semibold mb-2">📚 Original Project</h2>
+            <p class="text-sm mb-2">This Python version is based on the original Angular TypeScript implementation:</p>
+            <a href="https://github.com/mingfunwong/all-bitcoin-private-key"
+               class="text-blue-500 hover:text-blue-900 hover:underline text-sm">
+                https://github.com/mingfunwong/all-bitcoin-private-key
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

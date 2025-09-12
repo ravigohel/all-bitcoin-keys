@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}All Key{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="text-sm">
+        <header class="text-white bg-blue-800 px-6 py-4 mb-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <span class="text-xl pr-4">All Key</span>
+                    <a href="{{ url_for('home_page', page=1) }}" 
+                       class="px-4 py-2 hover:bg-blue-700 rounded transition">Browse Keys</a>
+                    <a href="{{ url_for('search') }}" 
+                       class="px-4 py-2 hover:bg-blue-700 rounded transition">Find Address</a>
+                    <a href="{{ url_for('balance_scan') }}" 
+                       class="px-4 py-2 hover:bg-blue-700 rounded transition">Find Balances</a>
+                    <a href="{{ url_for('about') }}" 
+                       class="px-4 py-2 hover:bg-blue-700 rounded transition">Info</a>
+                </div>
+                {% if page_total_balance is defined %}
+                <div class="text-right">
+                    <div class="flex gap-6">
+                        <div>
+                            <div class="text-sm text-blue-200">Page Total Balance</div>
+                            <div class="text-lg font-semibold text-green-300">
+                                {{ format_balance(page_total_balance) }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-blue-200">Page Total Received</div>
+                            <div class="text-lg font-semibold text-yellow-300">
+                                {{ format_balance(page_total_received) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </header>
+        <main class="text-slate-800 overflow-x-auto">
+            {% block content %}{% endblock %}
+        </main>
+        <footer class="px-6 py-4 text-slate-500">♥ allKey</footer>
+    </div>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // Show a brief success message
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✓';
+                button.classList.add('text-green-600');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalText;
+                    button.classList.remove('text-green-600');
+                }, 1000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Show success message
+                const button = event.target;
+                const originalText = button.innerHTML;
+                button.innerHTML = '✓';
+                button.classList.add('text-green-600');
+                
+                setTimeout(function() {
+                    button.innerHTML = originalText;
+                    button.classList.remove('text-green-600');
+                }, 1000);
+            });
+        }
+    </script>
+</body>
+</html>

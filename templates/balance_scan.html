@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Find Balances - All Key{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-lg m-4 p-6">
+    <h1 class="text-2xl font-bold mb-4">💰 Find Bitcoin Balances</h1>
+    <p class="text-gray-600 mb-6">Scan multiple pages to discover addresses that actually contain Bitcoin. High-speed batch processing for efficient results.</p>
+    
+    <form method="GET" action="{{ url_for('balance_scan') }}" class="mb-6">
+        <div class="grid md:grid-cols-3 gap-4">
+            <div>
+                <label for="start_page" class="block text-sm font-medium text-gray-700 mb-2">
+                    Starting Page:
+                </label>
+                <input type="number" 
+                       name="start_page" 
+                       id="start_page"
+                       value="{{ start_page if start_page else 1 }}"
+                       min="1" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                       required>
+            </div>
+            <div>
+                <label for="max_pages" class="block text-sm font-medium text-gray-700 mb-2">
+                    Pages to Scan:
+                </label>
+                <input type="number" 
+                       name="max_pages" 
+                       id="max_pages"
+                       value="{{ max_pages if max_pages else 10 }}"
+                       min="1" 
+                       max="50"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                       required>
+            </div>
+            <div class="flex items-end">
+                <button type="submit" 
+                        class="w-full px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500">
+                    🚀 Start Scan
+                </button>
+            </div>
+        </div>
+        <div class="mt-2 text-sm text-gray-500">
+            <p>⚡ Vercel Optimized: Batch processing for faster scans. Max 50 pages per scan.</p>
+        </div>
+    </form>
+
+    {% if error %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if results is defined %}
+        <div class="mb-4">
+            <h2 class="text-xl font-semibold mb-2">
+                📊 Scan Results 
+                {% if total_found > 0 %}
+                    <span class="text-green-600">({{ total_found }} addresses with balance found!)</span>
+                {% else %}
+                    <span class="text-gray-500">(No balances found)</span>
+                {% endif %}
+            </h2>
+            <p class="text-sm text-gray-600">
+                Scanned pages {{ start_page }} to {{ start_page + max_pages - 1 }} 
+                ({{ max_pages * ADDRESSES_PER_PAGE }} addresses total)
+            </p>
+        </div>
+
+        {% if results %}
+            <div class="overflow-x-auto">
+                <table class="table-auto w-full font-mono font-light">
+                    <thead class="text-gray-500 border-b border-b-slate-200">
+                        <tr>
+                            <th class="px-4 py-2 text-left">Page</th>
+                            <th class="px-4 py-2 text-left">Private Key</th>
+                            <th class="px-4 py-2 text-left">Compressed Address</th>
+                            <th class="px-4 py-2 text-left">Balance</th>
+                            <th class="px-4 py-2 text-left">Uncompressed Address</th>
+                            <th class="px-4 py-2 text-left">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr class="hover:bg-slate-100 border-b border-b-slate-100">
+                            <td class="px-4 py-2 whitespace-nowrap">
+                                <a href="{{ url_for('home_page', page=result.page) }}" 
+                                   class="text-blue-500 hover:text-blue-900 hover:underline">
+                                    {{ result.page }}
+                                </a>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-mono">{{ truncate_text(result.private_key, 7, 9) }}</span>
+                                    <button onclick="copyToClipboard('{{ result.private_key }}')" 
+                                            class="text-gray-400 hover:text-gray-600 transition-colors" 
+                                            title="Copy private key">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    <a href="https://www.blockchain.com/btc/address/{{ result.address_compressed }}"
+                                       target="_blank"
+                                       class="text-blue-500 hover:text-blue-900 hover:underline font-mono">
+                                        {{ truncate_text(result.address_compressed, 9, 7) }}
+                                    </a>
+                                    <button onclick="copyToClipboard('{{ result.address_compressed }}')" 
+                                            class="text-gray-400 hover:text-gray-600 transition-colors" 
+                                            title="Copy address">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap {{ get_balance_class(result.compressed_balance) }}">
+                                {{ format_balance(result.compressed_balance) }}
+                                {% if result.compressed_received > 0 %}
+                                    <br><small class="text-gray-500">Received: {{ format_balance(result.compressed_received) }}</small>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap">
+                                <div class="flex items-center gap-2">
+                                    <a href="https://www.blockchain.com/btc/address/{{ result.address_uncompressed }}"
+                                       target="_blank"
+                                       class="text-blue-500 hover:text-blue-900 hover:underline font-mono">
+                                        {{ truncate_text(result.address_uncompressed, 9, 7) }}
+                                    </a>
+                                    <button onclick="copyToClipboard('{{ result.address_uncompressed }}')" 
+                                            class="text-gray-400 hover:text-gray-600 transition-colors" 
+                                            title="Copy address">
+                                        📋
+                                    </button>
+                                </div>
+                            </td>
+                            <td class="px-4 py-2 whitespace-nowrap {{ get_balance_class(result.uncompressed_balance) }}">
+                                {{ format_balance(result.uncompressed_balance) }}
+                                {% if result.uncompressed_received > 0 %}
+                                    <br><small class="text-gray-500">Received: {{ format_balance(result.uncompressed_received) }}</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
+                <p>No addresses with balances found in the scanned range.</p>
+                <p class="text-sm mt-1">Try scanning a different range of pages.</p>
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h3 class="text-lg font-semibold mb-2 text-blue-800">💡 How Balance Scanning Works</h3>
+        <ul class="list-disc list-inside space-y-1 text-sm text-blue-700">
+            <li>Enter a starting page and number of pages to scan</li>
+            <li>The scanner will check balances for all addresses on each page</li>
+            <li>Only addresses with non-zero balances will be shown in results</li>
+            <li>Click on page numbers to jump to that page in the main view</li>
+            <li>Use copy buttons (📋) to copy private keys or addresses</li>
+            <li>Scanning is limited to 50 pages per request for Vercel performance</li>
+        </ul>
+    </div>
+
+    <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+        <h3 class="text-lg font-semibold mb-2 text-green-800">⚡ Performance Tips</h3>
+        <ul class="list-disc list-inside space-y-1 text-sm text-green-700">
+            <li>⚡ <strong>Optimized batch processing</strong> - All addresses checked in one API call</li>
+            <li>🚀 <strong>10x faster</strong> - Reduced API delays and increased concurrency</li>
+            <li>📊 Each page contains {{ ADDRESSES_PER_PAGE }} addresses ({{ ADDRESSES_PER_PAGE * 2 }} total with compressed/uncompressed)</li>
+            <li>⚡ Scanning 50 pages = checking {{ ADDRESSES_PER_PAGE * 2 * 50 }} addresses in seconds</li>
+            <li>🎯 Results are sorted by page number for easy navigation</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Optional: Show a brief success message
+        console.log('Copied to clipboard: ' + text.substring(0, 20) + '...');
+    }, function(err) {
+        console.error('Could not copy text: ', err);
+    });
+}
+</script>
+{% endblock %}
